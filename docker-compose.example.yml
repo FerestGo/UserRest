@@ -1,0 +1,27 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:11
+    container_name: ${APP_NAME}_postgres
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data:cached
+    restart: always
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    command: postgres -c shared_buffers=1024MB -c effective_cache_size=2048MB -c maintenance_work_mem=256MB
+    shm_size: '1gb'
+  api:
+    restart: always
+    container_name: ${APP_NAME}_api
+    build: ./build/go
+    volumes:
+      - ./.env:/go/src/skeleton-go/.env
+    command: /go/bin/skeleton-go -env=".env"
+    ports:
+      - ${APP_PORT}:4000
+    depends_on:
+      - postgres
