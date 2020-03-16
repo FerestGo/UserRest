@@ -49,10 +49,11 @@ func (api UserApi) Many(writer http.ResponseWriter, request *http.Request) {
 
 	limit := GetBodyIntVariable(request, "limit", DefaultLimit)
 	offset := GetBodyIntVariable(request, "offset", DefaultOffset)
+	order := GetBodyStringVariable(request, "order")
 
 	where := map[string]string{}
 
-	err := GetAllEntities(limit, offset, "", where, response)
+	err := GetAllEntities(limit, offset, "", where, order, response)
 
 	if err != nil {
 		return

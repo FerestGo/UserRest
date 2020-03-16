@@ -9,12 +9,16 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-func GetAllEntities(limit int, offset int, with string, where map[string]string, response interface{}) (err error) {
+func GetAllEntities(limit int, offset int, with string, where map[string]string, order string, response interface{}) (err error) {
+	if order == "" {
+		order = "ASC"
+	}
+
 	err = DB().Model(response).
 		Apply(Predicate(where)).
 		Apply(Pagination(limit, offset)).
 		Apply(Relation(with, response)).
-		Order("id ASC").
+		Order("id " + order).
 		Select()
 
 	return err
